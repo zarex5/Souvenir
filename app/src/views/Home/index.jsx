@@ -1,28 +1,51 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import Web3Context from '../../web3context';
-import { souvenirAbi } from '../../abi/abis';
+import { getTokenURI, getAccountTokens, mintToken } from '../../web3api';
 
 export default function Home() {
   const web3 = useContext(Web3Context);
   const [account, setAccount] = useState("");
 
-  const contractAddr = '0xAb4842507dE9f375Fed54A1138efDEDFdcA128c0';
-  const ipfsExample = "bafybeigi5l2j6y4jjtgxghlrucoejmjviawv26m667je6twwkfhhwqc5ja";
-
   useEffect(async () => {
     if(web3 && account == "") {
-      const newAccount = await web3.eth.requestAccounts();
-      setAccount(newAccount);
-
-      let account = newAccount[0];
-      const SouvenirContract = new web3.eth.Contract(souvenirAbi, contractAddr);
-      const gas = await SouvenirContract.methods.mintToken(account, ipfsExample).estimateGas();
-      const result = await SouvenirContract.methods.mintToken(account, ipfsExample).send({ from: account, gas });
+      const accounts = await web3.eth.requestAccounts();
+      setAccount(accounts[0]);
     }
   });
 
-  console.log(web3);
+  const handleMintToken = () => {
+    mintToken(web3, account).then(res => {
+      console.log(res);
+    })
+  };
+
+  const handleSubmit = (e) => {
+    //Avoids page change on submit
+    e.preventDefault();
+    const id = e.target.id.value;
+    if(id) {
+      getTokenURI(web3, id).then(res => {
+        console.log(res);
+      });
+    }
+  };
+
+  const handleAllTokens = () => {
+    getAccountTokens(web3, account).then(res => {
+      console.log(res);
+    });
+  }
+
   return (
-    <h1>{account}</h1>
+    <div>
+      <h1>{account}</h1>
+      <Button onClick={handleMintToken}>Mint token</Button> 
+      <Button onClick={handleAllTokens}>Get all tokens</Button> 
+      <Form onSubmit={handleSubmit.bind(this)}>
+        <input type="number" id="id" placeholder="Type token id"></input>
+        <Button type="submit">Get token info</Button> 
+      </Form>
+    </div>
   )
 }
