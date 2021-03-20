@@ -45,11 +45,16 @@ export async function getTokenOfOwnerByIndex(web3, account, id) {
   try {
     const txAccount = (await web3.eth.requestAccounts())[0];
     const SouvenirContract = new web3.eth.Contract(SOUVENIR_ABI, SOUVENIR_ADDR);
-    const tokens = await SouvenirContract.methods.tokenOfOwnerByIndex(account, id).call({ from: txAccount });
-    console.log(tokens)
+    const tokenId = await SouvenirContract.methods.tokenOfOwnerByIndex(account, id).call({ from: txAccount });
+    console.log(tokenId)
+    const token = {
+      uri: await SouvenirContract.methods.tokenURI(tokenId).call({ from: txAccount }),
+      id: tokenId
+    }
+    return token;
   }
   catch (err) {
     console.error(err);
-    return err;
+    return false;
   }
 }
