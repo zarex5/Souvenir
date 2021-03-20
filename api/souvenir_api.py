@@ -2,10 +2,12 @@ from flask import Flask
 from flask import request
 from dotenv import load_dotenv
 from pathlib import Path
+from flask_cors import CORS
 import requests
 import os
 
 app = Flask(__name__)
+CORS(app)
 load_dotenv()
 headers = {
     "pinata_api_key": os.getenv("PINATA_API_KEY"),
