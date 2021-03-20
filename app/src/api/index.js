@@ -6,3 +6,4 @@ export { getBalanceOfAccount } from './web3';
 
 // Pinata functions exports
 export { storeImage } from './ipfs';
+export { generateAndStoreImage } from './ipfs';
