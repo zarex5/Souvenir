@@ -30,8 +30,9 @@ export default function Tokens() {
   const handleMintTokenFromTemplate = async (e) => {
     e.preventDefault();
     const template = e.target.template.value;
+    const fontColor = e.target.fontColor.value;
     const cityName = e.target.cityName.value;
-    var res = await generateAndStoreImage(template, cityName);
+    var res = await generateAndStoreImage(template, fontColor, cityName);
     if (res.data.IpfsHash) {
       var res = await mintToken(web3, account, res.data.IpfsHash);
       console.log(res);
@@ -53,7 +54,8 @@ export default function Tokens() {
       <Card>
         <Card.Body>
           <Form onSubmit={handleMintTokenFromTemplate}>
-            <input type="text" id="cityName" placeholder="City name"/>
+            <input type="text" id="cityName" placeholder="City name"/><br/>
+            <input type="text" id="fontColor" placeholder="#EEFFEE"/>
             <Form.Check type="radio" label="Template1" id="template" name="template" value="1" checked="true"/>
             <Form.Check type="radio" label="Template2" id="template" name="template" value="2"/>
             <Form.Check type="radio" label="Template3" id="template" name="template" value="3"/>

@@ -12,6 +12,6 @@ export async function storeImage(image) {
   });
 }
 
-export async function generateAndStoreImage(templateNumber, cityName) {
-  return await axios.get(BASE_URL + 'generate-image/' + templateNumber + '/' + cityName);
+export async function generateAndStoreImage(templateNumber, fontColor, cityName) {
+  return await axios.get(BASE_URL + 'generate-image/' + templateNumber + '/' + cityName + '/' + fontColor);
 }
