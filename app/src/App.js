@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import React, { useState, useEffect, createContext } from 'react';
+import { useRoutes } from 'react-router-dom';
+import Web3 from 'web3';
+import routes from './routes';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Web3Provider } from './web3context';
 import './App.css';
 
 function App() {
+  const routing = useRoutes(routes);
+  const [web3, setWeb3] = useState(null);
+
+  useEffect(async () => {
+    var newWeb3 = new Web3(Web3.givenProvider);
+    if(!newWeb3) console.error('Metamask not enabled.');
+    else {
+      setWeb3(newWeb3);
+    }
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Web3Provider value={web3}>
+        {routing}
+      </Web3Provider>
     </div>
   );
 }
