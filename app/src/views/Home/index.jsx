@@ -6,6 +6,7 @@ import { getTokenURI, getAccountTokens, mintToken } from '../../web3api';
 export default function Home() {
   const web3 = useContext(Web3Context);
   const [account, setAccount] = useState("");
+  const [image, setImage] = useState("");
 
   useEffect(async () => {
     if(web3 && account == "") {
@@ -27,6 +28,7 @@ export default function Home() {
     if(id) {
       getTokenURI(web3, id).then(res => {
         console.log(res);
+        setImage(res);
       });
     }
   };
@@ -35,6 +37,12 @@ export default function Home() {
     getAccountTokens(web3, account).then(res => {
       console.log(res);
     });
+  }
+
+  const getImageLink = () => {
+    let link = "https://gateway.pinata.cloud/ipfs/" + image.substring(7);
+    console.log(link);
+    return link;
   }
 
   return (
@@ -46,6 +54,7 @@ export default function Home() {
         <input type="number" id="id" placeholder="Type token id"></input>
         <Button type="submit">Get token info</Button> 
       </Form>
+      <img src={getImageLink()}></img>
     </div>
   )
 }
