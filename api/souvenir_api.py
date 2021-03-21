@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from flask_cors import CORS
 from PIL import Image, ImageFont, ImageDraw 
+import json
 import requests
 import os
 
@@ -16,9 +17,9 @@ headers = {
 }
 
 default_stamps = {
-    "Template1":Image.open("./test_pics/stamp1.jpg"),
-    "Template2":Image.open("./test_pics/stamp2.jpg"),
-    "Template3":Image.open("./test_pics/stamp3.jpg")
+    "1":Image.open("./test_pics/stamp1.jpg"),
+    "2":Image.open("./test_pics/stamp2.jpg"),
+    "3":Image.open("./test_pics/stamp3.jpg")
 }
 
 # Function managing Pinata pinning post request
@@ -80,9 +81,8 @@ def pin_image():
     ## requests.post("http://localhost:105/pin-image",files = {'file': open(Path('./pics/myface.png'),'rb')})
 
 # Create default token and pin file
-@app.route('/generate-image',methods=['GET','POST'])
+@app.route('/generate-image',methods=['GET'])
 def generate_image():
-
     templateNb = request.args.get('templateNb')
     cityName = request.args.get('cityName')
     fontColor = request.args.get('fontColor')

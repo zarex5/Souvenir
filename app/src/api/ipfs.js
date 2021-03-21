@@ -13,5 +13,5 @@ export async function storeImage(image) {
 }
 
 export async function generateAndStoreImage(templateNumber, fontColor, cityName) {
-  return await axios.get(BASE_URL + 'generate-image/' + templateNumber + '/' + cityName + '/' + fontColor);
+  return await axios.get(BASE_URL + 'generate-image?cityName=' + cityName + '&fontColor=' + fontColor + '&templateNb=' + templateNumber);
 }
