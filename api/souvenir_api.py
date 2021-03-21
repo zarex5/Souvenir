@@ -31,6 +31,17 @@ def pinata_pin(file_dict):
         )
     return r
 
+# Function managing Pinata pinning post request
+def pinata_pin_json(metadata):
+    print(metadata)
+    r = requests.post(
+            "https://api.pinata.cloud/pinning/pinJSONToIPFS", 
+            headers=headers,
+            data=metadata
+        )
+
+    return r
+
 # Function that puts city name on default stamp
 def put_title(image,city_name,color = "#000000"):
     # Making image editable
@@ -100,7 +111,41 @@ def generate_image():
     else:
         return "Error uploading file!" 
 
-# Test function
+@app.route('/generate-metadata', methods=['POST'])
+def generate_metadata():
+    data = json.loads(request.data)
+    name = data['name']
+    description = data['description']
+    template = data['template']
+    fontColor = data['fontColor']
+    external_link = data['external_link']
+    gps = data['gps']
+
+    stamp = default_stamps[template]
+    f = put_title(stamp,name,fontColor)
+
+    file = {'file' : open(Path('./result.jpg'),'rb') }
+    r = pinata_pin(file)
+    IPFSHash = (r.json()['IpfsHash'])
+
+    metadata = {
+        "image": 'ipfs://' + IPFSHash,
+        "name": name,
+        "description": description,
+        "external_url": external_link,
+        "gps": gps
+    }
+
+    mp = pinata_pin_json(metadata)
+
+    if 'IpfsHash' in mp.text:
+        # print(str(r.text))
+        return mp.json()
+    else:
+        return "Error uploading file!" 
+
+
+# Test function 
 @app.route('/<string:name>/<string:numba>/')
 def hello(name,numba):
     return "Hello " + name + " your numba is " + numba
