@@ -79,37 +79,32 @@ def pin_image():
     print("Posted file: {}".format(request.files['file']))
     file = {'file' : request.files['file'].read()}
     
-    r = pinata_pin(file)
-    print(r.text)
+    name = request.files['name']
+    description = request.files['description']
+    external_link = request.files['external_link']
+    gps = request.files['gps']
 
-    if 'IpfsHash' in str(r.text):
+    r = pinata_pin(file)
+    IPFSHash = (r.json()['IpfsHash'])
+
+    metadata = {
+        "image": 'ipfs://' + IPFSHash,
+        "name": name,
+        "description": description,
+        "external_url": external_link,
+        "gps": gps
+    }
+
+    mp = pinata_pin_json(metadata)
+
+    if 'IpfsHash' in mp.text:
         # print(str(r.text))
-        return r.json()
+        return mp.json()
     else:
         return "Error uploading file!" 
 
     # Example POST request:
     ## requests.post("http://localhost:105/pin-image",files = {'file': open(Path('./pics/myface.png'),'rb')})
-
-# Create default token and pin file
-@app.route('/generate-image',methods=['GET'])
-def generate_image():
-    templateNb = request.args.get('templateNb')
-    cityName = request.args.get('cityName')
-    fontColor = request.args.get('fontColor')
-    
-    stamp = default_stamps[templateNb]
-    f = put_title(stamp,cityName,fontColor)
-
-    file = {'file' : open(Path('./result.jpg'),'rb') }
-    r = pinata_pin(file)
-    print(r.text)
-
-    if 'IpfsHash' in r.text:
-        # print(str(r.text))
-        return r.json()
-    else:
-        return "Error uploading file!" 
 
 @app.route('/generate-metadata', methods=['POST'])
 def generate_metadata():
@@ -143,12 +138,6 @@ def generate_metadata():
         return mp.json()
     else:
         return "Error uploading file!" 
-
-
-# Test function 
-@app.route('/<string:name>/<string:numba>/')
-def hello(name,numba):
-    return "Hello " + name + " your numba is " + numba
 
 
 if __name__ == '__main__':
