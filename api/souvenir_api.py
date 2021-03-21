@@ -79,10 +79,10 @@ def pin_image():
     print("Posted file: {}".format(request.files['file']))
     file = {'file' : request.files['file'].read()}
     
-    name = request.files['name']
-    description = request.files['description']
-    external_link = request.files['external_link']
-    gps = request.files['gps']
+    name = request.form.get('name')
+    description = request.form.get('description')
+    external_link = request.form.get('external_link')
+    gps = request.form.get('gps')
 
     r = pinata_pin(file)
     IPFSHash = (r.json()['IpfsHash'])
